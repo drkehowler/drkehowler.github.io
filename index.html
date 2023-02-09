@@ -1,63 +1,10 @@
+<!DOCTYPE html>
 <html>
     <head>
-        <title>Hello, jQuery!</title>
-        <meta charset="utf-8" />
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <title>drkehowler</title>
     </head>
-
-    <style>
-        .box {
-            width:100px;
-            height:100px;
-            background-color: aqua;
-        }
-    </style>
     <body>
-
-        <div>
-            <input type="text" id="message" />
-            <button type="button" class="btn" id="send-message" disabled="disabled">Send Message</button>
-        </div>
-
-        <ul id="messages">
-        </ul>
-
-        
-        
-        <script src = "https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.6.2.js"></script>
-
-        <script>
-
-            var worker = new Worker('worker.js');
-
-            worker.addEventListener('message', function(e) {
-            if (e.data == "READY") {
-
-                $('#messages').append('<li>Worker ready</li>');
-
-                $('#send-message').removeAttr('disabled').click(function() {
-
-                    worker.postMessage($('#message').val())
-                })
-
-                $('#message').focus()
-            } else {
-                
-                $('#messages').append('<li>' + e.data + '</li>' )
-
-                $('#message').val('').focus()
-
-            }
-
-            })
-
-            
-
-            $(function() {
-                //will execute when the page is ready
-            })
-             
-        </script>
-        
+        <h1>This is my github site!</h1>
+        <a href = "https://github.com/MicrosoftLearning/Introduction-to-Data-Science/blob/master/Labs/DAT101x%20Lab%201%20-%20Exploring%20Data.pdf">Lab 1</a>
     </body>
 </html>
