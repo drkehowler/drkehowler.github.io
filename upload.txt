@@ -1,21 +1,91 @@
 
+var express = require('express');
+var bodyParser = require('body-parser')
+var sqlite3 = require('sqlite3');
+var port = 3000;
 
-var express = require('Express');
+const path = require('path');
+const dbPath = path.resolve(__dirname, 'quotes.db')
+var db = new sqlite3.Database(dbPath);
 
 var app = express();
 
-var port = 3000;
+
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', function(request, response){
-    response.send('Hello, World!');
+    response.send("Get request received at '/'");
 });
 
-app.listen(port, function(){
-    console.log('Express app listening on port ' + port);
+app.get('/quotes/:id', function(req, res){
+    db.get('SELECT * FROM Quotes WHERE rowid = ?',[req.params.id],function(err,rows){
+        if(err){
+            console.log("Error message: "+ err.message)
+        }
+        else{
+            if (rows){
+                res.json(rows);
+            } else res.send("No quote with this id")
+            
+        }
+    });
 });
 
+app.get('/quotes', function(req, res){
+    if(req.query.year){
+        db.all('SELECT * FROM Quotes WHERE year = ?',[Number(req.query.year)],function(err,rows){
+            if(err){
+                console.log("Error message: "+ err.message)
+            }
+            else{
+                console.log("Return a list of quotes from the year: "+ req.query.year);
+                console.log(rows)
+                res.json(rows);
+            }
+        });
+        }
+        else{
+            db.all('SELECT * FROM Quotes',function(err,rows){
+                if(err){
+                    console.log("Error message: "+ err.message)
+                }
+                else{
+                    for( var i = 0; i < rows.length; i++){
+                        console.log(rows[i].quote);
+                        }
+                    res.json(rows);
+                }
+            });
+        }
+    
+})
 
-app.get('/test', function(request, response){response.send('Hello there');});
+app.post('/quotes', function(req, res){
+    console.log("Insert a new quote: " + req.body.quote);
+    
+    db.run('INSERT INTO Quotes VALUES (?, ?, ?)', [req.body.quote,req.body.author,req.body.year], function(err){
+        if (err){
+            console.log("Error message " + err.message)
+        }
+        else {
+            res.json(req.body);
+        }
+    })
 
+    
+});
+
+app.delete('/quotes', function(req, res){
+    console.log("Deleting quote with id of " + req.query.id);
+    res.send("Deleted quote with id of " + req.query.id)
+})
+
+
+app.listen(port, function(request, response){
+    console.log('Listening on Port ' + port)
+    db.all('SELECT * FROM Quotes WHERE year = ?',[1930],function(err,rows){
+        console.log(rows)
+    })
+})
 
 
